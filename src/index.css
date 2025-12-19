@@ -1,0 +1,153 @@
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 184 100% 50%; /* Electric Blue */
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 184 100% 50%;
+    --radius: 0px; /* Sharp corners for pixel look */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    background-image: radial-gradient(
+      circle at 2px 2px,
+      #1a1a1e 1px,
+      transparent 0
+    );
+    background-size: 24px 24px;
+    font-family: "Inter", sans-serif;
+  }
+
+  .font-retro {
+    font-family: "Press Start 2P", cursive;
+    line-height: 1.5;
+  }
+}
+
+/* Custom Pixel Classes */
+.pixel-border {
+  border: 4px solid #1a1a1e;
+  box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+}
+
+.pixel-button {
+  @apply relative inline-block px-4 py-2 font-retro text-[10px] transition-all active:translate-x-[2px] active:translate-y-[2px] active:shadow-none;
+  background: white;
+  color: black;
+  box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+  border: 4px solid black;
+}
+
+.pixel-button-primary {
+  @apply pixel-button;
+  background: #00f2ff;
+  border-color: #0077ff;
+  box-shadow: 4px 4px 0px 0px #0077ff;
+}
+
+.pixel-card {
+  @apply bg-retro-gray border-4 border-black shadow-pixel p-6;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0c;
+  border-left: 4px solid black;
+}
+::-webkit-scrollbar-thumb {
+  background: #1a1a1e;
+  border: 4px solid black;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00f2ff;
+}
+
+/* Connect Button Customization */
+.pixel-connect-wrapper [class*="dapp-kit-connect-button"] {
+  background: #00f2ff !important;
+  color: black !important;
+  font-family: 'Press Start 2P', cursive !important;
+  font-size: 8px !important;
+  border-radius: 0 !important;
+  border: 4px solid #0077ff !important;
+  box-shadow: 4px 4px 0px 0px #0077ff !important;
+  padding: 8px 16px !important;
+  transition: all 0.1s !important;
+  text-transform: uppercase !important;
+  height: auto !important;
+}
+
+.pixel-connect-wrapper [class*="dapp-kit-connect-button"]:hover {
+  background: white !important;
+  border-color: #0077ff !important;
+}
+
+.pixel-connect-wrapper [class*="dapp-kit-connect-button"]:active {
+  transform: translate(2px, 2px) !important;
+  box-shadow: 0px 0px 0px 0px #0077ff !important;
+}
+
+/* Modal and Popover Overrides */
+[class*="dapp-kit-modal"], [class*="dapp-kit-popover"] {
+  border-radius: 0 !important;
+  border: 4px solid black !important;
+  box-shadow: 8px 8px 0px 0px rgba(0,0,0,1) !important;
+  font-family: 'Press Start 2P', cursive !important;
+  background: #2a2a2e !important;
+}
+
+[class*="dapp-kit-modal-header"], [class*="dapp-kit-popover-header"] {
+  border-bottom: 4px solid black !important;
+  text-transform: uppercase !important;
+  font-size: 10px !important;
+}
+
+[class*="dapp-kit-wallet-item"] {
+  border-radius: 0 !important;
+  border: 2px solid transparent !important;
+  transition: all 0.2s !important;
+}
+
+[class*="dapp-kit-wallet-item"]:hover {
+  background: #00f2ff !important;
+  color: black !important;
+  border-color: black !important;
+}
+
+/* Animations */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.animate-pixel-blink {
+  animation: blink 1s steps(2, start) infinite;
+}
