@@ -42,6 +42,7 @@
     );
     background-size: 24px 24px;
     font-family: "Inter", sans-serif;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .font-retro {
@@ -64,11 +65,31 @@
   border: 4px solid black;
 }
 
+@media (max-width: 640px) {
+  .pixel-button {
+    @apply px-3 py-1.5 text-[8px];
+    border-width: 3px;
+    box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 1);
+  }
+  
+  .pixel-card {
+    @apply p-4 !important;
+    border-width: 3px !important;
+    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1) !important;
+  }
+}
+
 .pixel-button-primary {
   @apply pixel-button;
   background: #00f2ff;
   border-color: #0077ff;
   box-shadow: 4px 4px 0px 0px #0077ff;
+}
+
+@media (max-width: 640px) {
+  .pixel-button-primary {
+    box-shadow: 3px 3px 0px 0px #0077ff;
+  }
 }
 
 .pixel-card {

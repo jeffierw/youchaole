@@ -216,9 +216,9 @@ export function Distribute() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto py-10 px-4">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="space-y-6">
+    <div className="max-w-4xl mx-auto py-6 md:py-10 px-3 md:px-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+        <div className="space-y-4 md:space-y-6">
           <div className="pixel-card">
             <h2 className="font-retro text-[10px] text-electric-blue mb-4 uppercase flex items-center gap-2">
               <Loader2 className="w-4 h-4" /> Token Selection
@@ -238,19 +238,19 @@ export function Distribute() {
                 </button>
 
                 {isTokenSelectorOpen && (
-                  <div className="absolute z-50 mt-2 w-[280px] bg-black border-2 border-electric-blue shadow-2xl p-2 left-0">
+                  <div className="absolute z-50 mt-2 w-full min-w-[280px] sm:min-w-[320px] bg-black border-2 border-electric-blue shadow-2xl p-2 left-0 sm:-left-2">
                     <div className="relative mb-2">
                       <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-500" />
                       <input 
                         type="text"
                         autoFocus
-                        placeholder="Search type or symbol..."
+                        placeholder="Search name or symbol..."
                         value={tokenSearch}
                         onChange={(e) => setTokenSearch(e.target.value)}
                         className="w-full bg-retro-gray border border-gray-700 p-1.5 pl-7 text-[8px] font-retro text-white outline-none focus:border-electric-blue"
                       />
                     </div>
-                    <div className="max-h-[200px] overflow-y-auto custom-scrollbar">
+                    <div className="max-h-[250px] overflow-y-auto custom-scrollbar">
                       {ownedCoinTypes.filter(type => 
                         type.toLowerCase().includes(tokenSearch.toLowerCase()) || 
                         (isSameType(type, SUI_TYPE_ARG) && 'sui'.includes(tokenSearch.toLowerCase()))
@@ -266,15 +266,15 @@ export function Distribute() {
                             }}
                             className={`w-full text-left p-2 hover:bg-electric-blue group transition-colors flex items-center justify-between ${isSameType(coinType, type) ? 'bg-electric-blue/20' : ''}`}
                           >
-                            <div className="flex flex-col overflow-hidden max-w-[65%]">
+                            <div className="flex flex-col overflow-hidden max-w-[60%] sm:max-w-[70%]">
                               <span className={`font-retro text-[8px] ${isSameType(coinType, type) ? 'text-electric-blue' : 'text-white group-hover:text-black'}`}>
                                 {isSameType(type, SUI_TYPE_ARG) ? 'SUI' : type.split('::').pop()}
                               </span>
                               <span className="text-[6px] font-mono text-gray-400 group-hover:text-black/70 truncate">{type}</span>
                             </div>
                             <div className="flex items-center gap-2 shrink-0">
-                                <span className="font-retro text-[8px] text-gray-500 group-hover:text-black">
-                                    {Number(rawBal / 1000000n) / 1000}
+                                <span className="font-retro text-[8px] text-gray-500 group-hover:text-black whitespace-nowrap">
+                                    {(Number(rawBal / 100000n) / 10000).toFixed(2)}
                                 </span>
                                 {isSameType(coinType, type) && <Check className="w-3 h-3 text-electric-blue group-hover:text-black" />}
                             </div>
@@ -287,34 +287,34 @@ export function Distribute() {
               </div>
 
               <div>
-                <label className="font-retro text-[8px] text-gray-400 block mb-2 uppercase">Amount Per Address</label>
+                <label className="font-retro text-[8px] text-gray-400 block mb-2 uppercase">Amount per address</label>
                 <div className="relative flex flex-col gap-1">
                   <div className="relative flex items-center">
                     <input 
                       type="number" 
                       value={amount} 
                       onChange={(e) => setAmount(e.target.value)}
-                      className="w-full bg-black border-2 border-gray-800 p-2 pr-24 text-white font-retro text-[10px] focus:border-electric-blue outline-none"
+                      className="w-full bg-black border-2 border-gray-800 p-2 pr-20 md:pr-24 text-white font-retro text-[10px] focus:border-electric-blue outline-none"
                       placeholder="0.0"
                     />
-                    <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
-                      <span className="font-retro text-[8px] text-electric-blue">{symbol}</span>
-                      <span className="bg-gray-800 px-1 py-0.5 rounded text-[6px] text-gray-400 font-mono">D:{decimals}</span>
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5 pointer-events-none">
+                      <span className="font-retro text-[6px] md:text-[8px] text-electric-blue">{symbol}</span>
+                      <span className="bg-gray-800 px-1 py-0.5 rounded text-[5px] md:text-[6px] text-gray-400 font-mono">D:{decimals}</span>
                     </div>
                   </div>
-                  {tokenName && <p className="text-[6px] font-retro text-gray-500 italic pl-1">{tokenName}</p>}
+                  {tokenName && <p className="text-[6px] font-retro text-gray-500 italic pl-1 truncate">{tokenName}</p>}
                 </div>
               </div>
 
               <div className="pt-2 border-t border-gray-800">
                 <div className="flex justify-between items-center mb-1">
-                  <span className="font-retro text-[8px] text-gray-400 uppercase">Your Balance</span>
-                  <span className="font-retro text-[10px] text-white tabular-nums">{formattedBalance}</span>
+                  <span className="font-retro text-[8px] text-gray-400 uppercase">Current balance</span>
+                  <span className="font-retro text-[8px] md:text-[10px] text-white tabular-nums">{formattedBalance}</span>
                 </div>
                 {isBalanceInsufficient && (
                   <div className="flex items-center gap-1.5 text-red-500 mt-2 bg-red-500/10 p-2 border border-red-500/30">
                     <AlertTriangle className="w-3 h-3 shrink-0" />
-                    <span className="font-retro text-[6px] uppercase">Insufficient Balance</span>
+                    <span className="font-retro text-[6px] uppercase">Insufficient balance</span>
                   </div>
                 )}
               </div>
@@ -323,22 +323,22 @@ export function Distribute() {
 
           <div className="pixel-card bg-[#00f2ff]/5 border-electric-blue/30">
             <h2 className="font-retro text-[10px] text-white mb-2 uppercase flex items-center gap-2">
-              <Users className="w-4 h-4 text-electric-blue" /> Stats
+              <Users className="w-4 h-4 text-electric-blue" /> Summary
             </h2>
             <div className="space-y-2 text-[10px] font-retro">
               <div className="flex flex-col gap-1">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-400">Addresses</span>
+                  <span className="text-gray-400">Valid Addresses</span>
                   <span className="text-electric-blue">{addresses.length}</span>
                 </div>
                 {hasFilteredSelf && (
                   <p className="text-[6px] text-yellow-500/80 text-right uppercase italic">
-                    * Ignored sender wallet
+                    * Sender wallet excluded
                   </p>
                 )}
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-400 uppercase">Total Required</span>
+                <span className="text-gray-400 uppercase leading-none text-right">Total Distribution</span>
                 <span className={`text-electric-blue ${isBalanceInsufficient ? 'text-red-500' : ''}`}>
                   {amount && addresses.length ? (parseFloat(amount) * addresses.length).toLocaleString(undefined, { maximumFractionDigits: decimals }) : '0'} {symbol}
                 </span>
@@ -349,39 +349,39 @@ export function Distribute() {
 
         <div className="md:col-span-2 flex flex-col gap-6">
           <div className="pixel-card flex flex-col">
-            <h2 className="font-retro text-[12px] text-white mb-4 uppercase flex items-center gap-2">
-              <Send className="w-5 h-5 text-electric-blue" /> Receiver Wallets
+            <h2 className="font-retro text-[10px] md:text-[12px] text-white mb-4 uppercase flex items-center gap-2">
+              <Send className="w-4 h-4 md:w-5 md:h-5 text-electric-blue" /> Receiver wallets
             </h2>
             <textarea 
               value={addressInput}
               onChange={(e) => setAddressInput(e.target.value)}
-              className="w-full bg-black border-2 border-gray-800 p-4 text-white font-mono text-[10px] focus:border-electric-blue outline-none resize-none min-h-[350px] leading-relaxed"
+              className="w-full bg-black border-2 border-gray-800 p-3 md:p-4 text-white font-mono text-[9px] md:text-[10px] focus:border-electric-blue outline-none resize-none min-h-[250px] md:min-h-[350px] leading-relaxed"
               placeholder="Paste addresses here, one per line..."
             />
             
-            <div className="mt-8 flex flex-col items-center justify-center">
+            <div className="mt-6 md:mt-8 flex flex-col items-center justify-center">
               <button 
                 onClick={handleDistribute}
                 disabled={isProcessing || addresses.length === 0 || !amount || isBalanceInsufficient}
-                className={`w-full pixel-button-primary py-4 relative group ${
+                className={`w-full pixel-button-primary py-3 md:py-4 relative group ${
                   (isProcessing || addresses.length === 0 || !amount || isBalanceInsufficient) ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
               >
-                <div className="flex items-center justify-center gap-3 w-full">
+                <div className="flex items-center justify-center gap-2 md:gap-3 w-full">
                   {isProcessing ? (
-                    <Loader2 className="w-6 h-6 animate-spin" />
+                    <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin" />
                   ) : (
                     <>
-                      <Send className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                      <span className="mt-1 font-retro text-[12px]">DISTRIBUTE TO {addresses.length} WALLETS</span>
+                      <Send className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                      <span className="mt-1 font-retro text-[9px] md:text-[12px]">Distribute to {addresses.length} wallets</span>
                     </>
                   )}
                 </div>
               </button>
-              <div className="mt-4 flex items-center gap-2">
-                 <div className="w-1.5 h-1.5 bg-electric-blue animate-pulse"></div>
+              <div className="mt-4 flex items-center gap-2 text-center">
+                 <div className="w-1.5 h-1.5 bg-electric-blue animate-pulse shrink-0"></div>
                  <p className="font-retro text-[6px] text-gray-500 uppercase tracking-tighter">
-                   Net: <span className="text-electric-blue">{network.toUpperCase()}</span> | Contract: {CONTRACT_ID.slice(0, 6)}...{CONTRACT_ID.slice(-4)}
+                   Network: <span className="text-electric-blue">{network.toUpperCase()}</span> | Contract: {CONTRACT_ID.slice(0, 4)}...{CONTRACT_ID.slice(-4)}
                  </p>
               </div>
             </div>
@@ -393,23 +393,23 @@ export function Distribute() {
                 <div className="w-3 h-3 bg-green-500 shadow-[0_0_8px_#22c55e]"></div>
                 <p className="font-retro text-[10px] text-green-400 uppercase leading-none">Transaction Confirmed</p>
               </div>
-              <div className="bg-black/40 border border-green-500/20 p-3 mb-4">
-                <p className="font-mono text-[8px] text-gray-400 break-all">{txDigest}</p>
+              <div className="bg-black/40 border border-green-500/20 p-3 mb-4 overflow-hidden">
+                <p className="font-mono text-[8px] text-gray-400 break-all leading-relaxed">{txDigest}</p>
               </div>
-              <div className="font-retro text-[8px] text-gray-400 flex flex-wrap items-center gap-x-1.5 leading-relaxed">
-                <span className="mt-0.5">CHECK ON EXPLORER</span>
+              <div className="font-retro text-[6px] md:text-[8px] text-gray-400 flex flex-wrap items-center gap-x-1.5 gap-y-2 leading-relaxed">
+                <span className="mt-0.5">Check records</span>
                 <a 
                   href={`https://suiscan.xyz/${network}/tx/${txDigest}`} 
                   target="_blank" 
-                  className="text-electric-blue hover:text-white underline decoration-1 underline-offset-2 transition-colors uppercase"
+                  className="text-electric-blue hover:text-white underline decoration-1 underline-offset-2 transition-colors uppercase whitespace-nowrap"
                 >
                   SUISCAN
                 </a> 
-                <span className="mt-0.5">OR</span>
+                <span className="mt-0.5">or</span>
                 <a 
                   href={network === 'testnet' ? `https://testnet.suivision.xyz/txblock/${txDigest}` : `https://suivision.xyz/txblock/${txDigest}`} 
                   target="_blank" 
-                  className="text-electric-blue hover:text-white underline decoration-1 underline-offset-2 transition-colors uppercase"
+                  className="text-electric-blue hover:text-white underline decoration-1 underline-offset-2 transition-colors uppercase whitespace-nowrap"
                 >
                   SUIVISION
                 </a>
