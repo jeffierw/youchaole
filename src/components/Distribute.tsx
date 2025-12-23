@@ -37,32 +37,32 @@ export function Distribute() {
 
   const CONTRACT_ID = CONTRACT_CONFIG[network] || CONTRACT_CONFIG.testnet;
 
-  const { data: ownedCoins, refetch: refetchCoins } = useSuiClientQuery('getAllCoins', {
+  const { data: allBalances, refetch: refetchBalances } = useSuiClientQuery('getAllBalances', {
     owner: account?.address || '',
   }, {
     enabled: !!account?.address,
   });
 
   const ownedCoinTypes = useMemo(() => {
-    if (!ownedCoins?.data) return [SUI_TYPE_ARG];
-    const types = new Set(ownedCoins.data.map(c => c.coinType));
+    if (!allBalances) return [SUI_TYPE_ARG];
+    const types = new Set(allBalances.map(b => b.coinType));
     types.add(SUI_TYPE_ARG);
     return Array.from(types).sort((a, b) => {
         if (isSameType(a, SUI_TYPE_ARG)) return -1;
         if (isSameType(b, SUI_TYPE_ARG)) return 1;
         return a.localeCompare(b);
     });
-  }, [ownedCoins]);
+  }, [allBalances]);
 
   // Aggregate balances for the dropdown
   const coinBalancesMap = useMemo(() => {
-    if (!ownedCoins?.data) return {};
+    if (!allBalances) return {};
     const map: Record<string, bigint> = {};
-    ownedCoins.data.forEach(c => {
-      map[c.coinType] = (map[c.coinType] || 0n) + BigInt(c.balance);
+    allBalances.forEach(b => {
+      map[b.coinType] = BigInt(b.totalBalance);
     });
     return map;
-  }, [ownedCoins]);
+  }, [allBalances]);
 
   const normalizedCoinType = useMemo(() => {
     try {
@@ -81,11 +81,10 @@ export function Distribute() {
   const tokenName = coinMetadata?.name ?? '';
 
   const balance = useMemo(() => {
-    if (!ownedCoins?.data) return 0n;
-    return ownedCoins.data
-      .filter(c => isSameType(c.coinType, normalizedCoinType))
-      .reduce((sum, c) => sum + BigInt(c.balance), 0n);
-  }, [ownedCoins, normalizedCoinType]);
+    if (!allBalances) return 0n;
+    const item = allBalances.find(b => isSameType(b.coinType, normalizedCoinType));
+    return item ? BigInt(item.totalBalance) : 0n;
+  }, [allBalances, normalizedCoinType]);
 
   const formattedBalance = (Number(balance) / Math.pow(10, decimals)).toLocaleString(undefined, { 
     maximumFractionDigits: decimals,
@@ -123,7 +122,7 @@ export function Distribute() {
 
   useEffect(() => {
     setTxDigest(null);
-    if (account?.address) refetchCoins();
+    if (account?.address) refetchBalances();
   }, [network, account?.address]);
 
   const handleDistribute = async () => {
@@ -146,13 +145,36 @@ export function Distribute() {
         const [suiCoin] = txb.splitCoins(txb.gas, [totalAmountMist]);
         coinToUse = suiCoin;
       } else {
-        const { data: coins } = await client.getCoins({
-          owner: account.address,
-          coinType: normalizedCoinType,
-        });
-        if (coins.length === 0) throw new Error(`No ${symbol} found`);
+        // 分页获取所有代币对象，确保凑够余额
+        const coinObjects: string[] = [];
+        let cursor: string | null | undefined = null;
+        let gatheredBalance = 0n;
 
-        const coinObjects = coins.map(c => c.coinObjectId);
+        while (gatheredBalance < totalAmountMist) {
+          const { data: coins, nextCursor, hasNextPage } = await client.getCoins({
+            owner: account.address,
+            coinType: normalizedCoinType,
+            cursor,
+          });
+
+          if (coins.length === 0 && gatheredBalance < totalAmountMist) {
+            throw new Error(`Insufficient ${symbol} objects found to cover the total amount`);
+          }
+
+          for (const coin of coins) {
+            coinObjects.push(coin.coinObjectId);
+            gatheredBalance += BigInt(coin.balance);
+            if (gatheredBalance >= totalAmountMist) break;
+          }
+
+          if (gatheredBalance >= totalAmountMist || !hasNextPage) break;
+          cursor = nextCursor;
+        }
+
+        if (gatheredBalance < totalAmountMist) {
+            throw new Error(`Insufficient ${symbol} balance (gathered ${gatheredBalance}, need ${totalAmountMist})`);
+        }
+
         const primaryCoin = txb.object(coinObjects[0]);
         if (coinObjects.length > 1) {
             txb.mergeCoins(primaryCoin, coinObjects.slice(1).map(id => txb.object(id)));
@@ -188,7 +210,7 @@ export function Distribute() {
             setAddressInput('');
             toast(`Distributed to ${addresses.length} addresses!`, 'success');
             setTimeout(() => {
-                refetchCoins();
+                refetchBalances();
                 successRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }, 500);
           },
